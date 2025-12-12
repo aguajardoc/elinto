@@ -19,6 +19,7 @@ void __f(const char *names, Arg1 &&arg1, Args &&... args) {
 }
 
 #define ll long long
+#define int ll
 #define ld long double
 #define pb push_back
 #define INF 2e18
@@ -31,7 +32,7 @@ void solve() {
     
 }
 
-int main() {
+signed main() {
     fast_cin();
     
     int t = 1;
