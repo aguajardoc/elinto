@@ -1,8 +1,8 @@
-// Problem: 193 - Graph Coloring
-// Contest: UVa Online Judge
-// URL: https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=129
-// Memory Limit: 32 MB
-// Time Limit: 3000 ms
+// Problem: C. Vacations
+// Contest: Codeforces - Codeforces Round 363 (Div. 2)
+// URL: https://codeforces.com/contest/699/problem/C
+// Memory Limit: 256 MB
+// Time Limit: 1000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -35,57 +35,50 @@ void __f(const char *names, Arg1 &&arg1, Args &&... args) {
 #define MOD 1000000007
 
 double eps = 1e-9;
-vector<vector<int>> AL;
-int ans = 0;
-vector<int> bColor;
+vector<vector<int>> dp;
+int n;
+vector<int> a;
 
-bool canBeBlack(int v, vector<int>& color) {
-	for (auto& u : AL[v]) {
-		if (color[u] == 1) return false;
+int recurse(int idx, int act) {
+	if (idx == n) {
+		return 0;
 	}
-	return true;
-}
-
-void dfs(int u, vector<int>& color, int& ct) {
-	for (auto& v : AL[u]) {
-		
+	if (dp[act][idx] != -1) return dp[act][idx];
+	
+	int days = 1e9;
+	if (a[idx] == 0) {
+		days = min(days, recurse(idx + 1, 0) + 1);
 	}
+	if (a[idx] == 1) {
+		days = min(days, recurse(idx + 1, 0) + 1);
+		if (act != 2 )days = min(days, recurse(idx + 1, 2));
+	}
+	if (a[idx] == 2) {
+		days = min(days, recurse(idx + 1, 0) + 1);
+		if (act != 1) days = min(days, recurse(idx + 1, 1));		
+	}
+	if (a[idx] == 3) {
+		days = min(days, recurse(idx + 1, 0) + 1);
+		if (act != 1) days = min(days, recurse(idx + 1, 1));		
+		if (act != 2 )days = min(days, recurse(idx + 1, 2));		
+	}
+	
+	return dp[act][idx] = days;
 }
 
 void solve() {
-     int n, k;
-     cin >> n >> k;
-     AL.assign(102, vector<int>());
-     ans = 0;
-     bColor.clear();
-     
-     AL[101] = {0};
-     for (int i = 0; i < k; i++) {
-     	int u, v;
-     	cin >> u >> v;
-     	u--, v--;
-     	AL[u].push_back(v);
-        AL[v].push_back(u);
-     }
-     
-     vector<int> color(n, -1);
-     int ct = 0;
-     dfs(101, color, ct);
-     
-     cout << ans << ln;
-     for (int i = 0;i < n; i++) {
-     	if (bColor[i] == 1) {
-     		cout << i + 1 << " ";
-     	}
-     }
-     cout << ln;
+    cin >> n;
+    a.assign(n, 0);
+    dp.assign(3, vector<int> (n, -1));
+    for (auto& i : a) cin >>i;
+    cout << recurse(0,0) << ln;
 }
 
 signed main() {
     fast_cin();
     
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while(t--) {
         solve();
     }

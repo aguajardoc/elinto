@@ -1,6 +1,6 @@
-// Problem: 193 - Graph Coloring
+// Problem: 10344 - 23 out of 5
 // Contest: UVa Online Judge
-// URL: https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=129
+// URL: https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=1285
 // Memory Limit: 32 MB
 // Time Limit: 3000 ms
 // 
@@ -35,57 +35,44 @@ void __f(const char *names, Arg1 &&arg1, Args &&... args) {
 #define MOD 1000000007
 
 double eps = 1e-9;
-vector<vector<int>> AL;
-int ans = 0;
-vector<int> bColor;
+vector<int> a(5);
 
-bool canBeBlack(int v, vector<int>& color) {
-	for (auto& u : AL[v]) {
-		if (color[u] == 1) return false;
+bool backtrack(int idx, int res) {
+	if(idx == 5) {
+		if (res == 23) return true;
+		return false;
 	}
-	return true;
-}
-
-void dfs(int u, vector<int>& color, int& ct) {
-	for (auto& v : AL[u]) {
-		
-	}
+	
+	return 	backtrack(idx+1, res+a[idx]) or 
+			backtrack(idx+1, res-a[idx]) or
+			backtrack(idx+1, res*a[idx]);
 }
 
 void solve() {
-     int n, k;
-     cin >> n >> k;
-     AL.assign(102, vector<int>());
-     ans = 0;
-     bColor.clear();
-     
-     AL[101] = {0};
-     for (int i = 0; i < k; i++) {
-     	int u, v;
-     	cin >> u >> v;
-     	u--, v--;
-     	AL[u].push_back(v);
-        AL[v].push_back(u);
-     }
-     
-     vector<int> color(n, -1);
-     int ct = 0;
-     dfs(101, color, ct);
-     
-     cout << ans << ln;
-     for (int i = 0;i < n; i++) {
-     	if (bColor[i] == 1) {
-     		cout << i + 1 << " ";
-     	}
-     }
-     cout << ln;
+    while (true) {
+    	bool flag = false;
+    	for (int i = 0; i < 5; i++) {
+    		cin >> a[i];
+    		flag |= (a[i]>0);
+	    }
+	    if (!flag) break;
+	    sort(a.begin(), a.end());
+	    do {
+	    	if (backtrack(1, a[0])) {
+	    		flag = false;
+	    		break;
+	    	}
+	    } while (next_permutation(a.begin(), a.end()));
+	    
+		cout << (flag ? "Impossible":"Possible") << ln;
+	}
 }
 
 signed main() {
     fast_cin();
     
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while(t--) {
         solve();
     }

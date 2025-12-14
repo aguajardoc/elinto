@@ -1,8 +1,8 @@
-// Problem: 193 - Graph Coloring
-// Contest: UVa Online Judge
-// URL: https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=129
-// Memory Limit: 32 MB
-// Time Limit: 3000 ms
+// Problem: C. Woodcutters
+// Contest: Codeforces - Codeforces Round 303 (Div. 2)
+// URL: https://codeforces.com/contest/545/problem/C
+// Memory Limit: 256 MB
+// Time Limit: 1000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -35,57 +35,45 @@ void __f(const char *names, Arg1 &&arg1, Args &&... args) {
 #define MOD 1000000007
 
 double eps = 1e-9;
-vector<vector<int>> AL;
-int ans = 0;
-vector<int> bColor;
+int n;
+vector<int> a, h;
+vector<vector<int>> dp;
 
-bool canBeBlack(int v, vector<int>& color) {
-	for (auto& u : AL[v]) {
-		if (color[u] == 1) return false;
+int recurse(int idx, int dir) {
+	if (idx == n) {
+		return 0;
 	}
-	return true;
-}
-
-void dfs(int u, vector<int>& color, int& ct) {
-	for (auto& v : AL[u]) {
-		
+	if (dp[dir][idx] != -1) return dp[dir][idx];
+	
+	int fell = 0;
+	if (!idx or (idx and (((dir == 0 or dir == 1) and a[idx] - h[idx] > a[idx - 1]) or (dir == 2 and a[idx] - h[idx] > a[idx - 1] + h[idx - 1])))) {
+		fell = max(fell, recurse(idx + 1, 1) + 1);
 	}
+	if (idx == n - 1 or (idx != n - 1 and a[idx] + h[idx] < a[idx + 1])) {
+		fell = max(fell, recurse(idx + 1, 2) + 1);
+	}
+	
+	fell = max(fell, recurse(idx + 1, 0));
+	
+	return dp[dir][idx] = fell;
 }
 
 void solve() {
-     int n, k;
-     cin >> n >> k;
-     AL.assign(102, vector<int>());
-     ans = 0;
-     bColor.clear();
-     
-     AL[101] = {0};
-     for (int i = 0; i < k; i++) {
-     	int u, v;
-     	cin >> u >> v;
-     	u--, v--;
-     	AL[u].push_back(v);
-        AL[v].push_back(u);
-     }
-     
-     vector<int> color(n, -1);
-     int ct = 0;
-     dfs(101, color, ct);
-     
-     cout << ans << ln;
-     for (int i = 0;i < n; i++) {
-     	if (bColor[i] == 1) {
-     		cout << i + 1 << " ";
-     	}
-     }
-     cout << ln;
+    cin >> n;
+    a.assign(n, 0);
+    h.assign(n, 0);
+    dp.assign(3, vector<int> (n, -1));
+    for (int i = 0; i < n; i++) {
+    	cin >> a[i] >> h[i];
+    }
+    cout << recurse(0,0) << ln;
 }
 
 signed main() {
     fast_cin();
     
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while(t--) {
         solve();
     }
