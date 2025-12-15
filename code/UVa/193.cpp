@@ -36,50 +36,71 @@ void __f(const char *names, Arg1 &&arg1, Args &&... args) {
 
 double eps = 1e-9;
 vector<vector<int>> AL;
+int n, k;
+vector<int> color, best;
 int ans = 0;
-vector<int> bColor;
 
-bool canBeBlack(int v, vector<int>& color) {
-	for (auto& u : AL[v]) {
-		if (color[u] == 1) return false;
+bool canBeBlack(int u) {
+	for (auto& v : AL[u]) {
+		if (color[v] == 1) return false;
 	}
+	
 	return true;
 }
 
-void dfs(int u, vector<int>& color, int& ct) {
-	for (auto& v : AL[u]) {
-		
+void recurse(int idx, int black, vector<int>& blacks) {
+	if (idx == n) {
+		if (black > ans) {
+			ans = black;
+			best = blacks;
+		}
+		return;
 	}
+	
+	if (black + (n - idx) <= ans) return;
+	
+	if (canBeBlack(idx)) {
+		color[idx] = 1;
+		blacks.push_back(idx);
+		recurse(idx + 1, black + 1, blacks);
+		color[idx] = 0;
+		blacks.pop_back();
+	}
+	
+	recurse(idx + 1, black, blacks);
+	
+	return;
 }
 
+string magic;
+
 void solve() {
-     int n, k;
-     cin >> n >> k;
-     AL.assign(102, vector<int>());
-     ans = 0;
-     bColor.clear();
-     
-     AL[101] = {0};
-     for (int i = 0; i < k; i++) {
-     	int u, v;
-     	cin >> u >> v;
-     	u--, v--;
-     	AL[u].push_back(v);
-        AL[v].push_back(u);
-     }
-     
-     vector<int> color(n, -1);
-     int ct = 0;
-     dfs(101, color, ct);
-     
-     cout << ans << ln;
-     for (int i = 0;i < n; i++) {
-     	if (bColor[i] == 1) {
-     		cout << i + 1 << " ";
-     	}
-     }
-     cout << ln;
+	cin >> n >> k;
+	ans = 0;
+	AL.assign(n, vector<int>());
+	color.assign(n, 0);
+	for (int i = 0; i < k; i++) {
+		int u, v;
+		cin >> u >> v;
+		u--, v--;
+		AL[u].push_back(v);
+		AL[v].push_back(u);
+	}
+	vector<int> blacks;
+	recurse(0, 0, blacks);
+	// cout << ans << ln;
+	
+	string path;
+	path += to_string(ans) + "\n";
+	
+	for (auto& i : best) {
+		// dbg(i);
+		path += to_string(i + 1) + " ";
+	}
+	path.pop_back();
+	magic += path + "\n";
 }
+     
 
 signed main() {
     fast_cin();
@@ -89,6 +110,8 @@ signed main() {
     while(t--) {
         solve();
     }
+    magic.pop_back();
+    cout << magic << ln;
 
     return 0;
 }
