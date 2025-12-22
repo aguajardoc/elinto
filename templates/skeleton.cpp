@@ -35,10 +35,10 @@ void solve() {
 signed main() {
     fast_cin();
     
-    int t = 1;
-    cin >> t;
-    while(t--) {
-        solve();
+    int T = 1;
+    cin >> T;
+    for (int i = 1; i <= T; i++) {
+        solve(  );
     }
 
     return 0;
