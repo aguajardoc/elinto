@@ -1,0 +1,84 @@
+// Problem: C. Ilya and Matrix
+// Contest: Codeforces - Codeforces Round 186 (Div. 2)
+// URL: https://codeforces.com/contest/313/problem/C
+// Memory Limit: 256 MB
+// Time Limit: 1000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ln "\n"
+#define fast_cin() \
+    ios_base::sync_with_stdio(false); \
+    cin.tie(NULL)
+#define iofiles() \
+    freopen("input.in", "r", stdin); \
+    freopen("output.out", "w", stdout)
+#define dbg(...) __f(#__VA_ARGS__, __VA_ARGS__)
+template <typename Arg1>
+void __f(const char *name, Arg1 &&arg1) { cout << name << ": " << arg1 << endl; }
+template <typename Arg1, typename... Args>
+void __f(const char *names, Arg1 &&arg1, Args &&... args) {
+    const char *comma = strchr(names + 1, ',');
+    cout.write(names, comma - names) << ": " << arg1 << " |";
+    __f(comma + 1, args...);
+}
+
+#define ll long long
+#define int ll
+#define ld long double
+#define pb push_back
+#define INF 2e18
+#define PI 3.14159265358979323846
+#define MOD 1000000007
+
+double eps = 1e-9;
+
+void solve() {
+    ll n4;
+    cin >> n4;
+    ll n = 1;
+    ll x = 1;
+    while (x < n4) {
+    	n++;
+    	x *= 4;
+    }
+    
+    vector<ll> a(n4);
+    for (auto& i : a) cin >> i;
+    sort(a.rbegin(), a.rend());
+    
+    ll times = n;
+    ll idx = 0;
+    ll cur = 1;
+    ll curp = 1;
+    ll ans = 0;
+    while (idx < n4) {
+    	ans += a[idx] * times;
+    	cur--;
+    	
+    	if (!cur) {
+    		curp = curp * 4;
+    		cur = curp - curp/4;
+    		times--;
+    	}
+    	idx++;
+    }
+    
+    cout << ans << ln;
+}
+
+signed main() {
+    fast_cin();
+    
+    int T = 1;
+    // cin >> T;
+    for (int i = 1; i <= T; i++) {
+        solve(  );
+    }
+
+    return 0;
+}
+// g++ A.cpp && ./a.out <input.in>output.out
