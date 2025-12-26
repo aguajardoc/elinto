@@ -50,7 +50,7 @@ void solve() {
     vector<int> ans(n, 0);
     
     // find blocks of cons 1's
-    vector<pair<int, int>> cons, alternating;
+    vector<int> cstarts, cends, altstarts, altends;
     for (int i = 0; i < n; i++) {
     	if (a[i] == 0) continue;
     	int start = i;
@@ -58,7 +58,10 @@ void solve() {
     		i++;
     	}
     	i--;
-    	cons.push_back({start, i});
+    	if (start == i and (i != 0 and i != n - 1)) continue;
+    	// dbg(start, i);
+    	cstarts.push_back(start);
+    	cends.push_back(i);
     }
     
     // find blocks of alternating
@@ -71,36 +74,78 @@ void solve() {
     		x = 1 - x;
     	}
     	i--;
-    	alternating.push_back({start, i});
+    	// dbg(start, i);
+    	altstarts.push_back(start);
+    	altends.push_back(i - (a[i] == 1));
     }
     
-    // we have all structures of stability, now what?
-    // TODO: implement this algorithm
-    // iterate over alternating regions, if right before we have a structure, 
-	int idx = 0;
-	int oidx = 0;
+    int res = 0; 
     for (int i = 0; i < n; i++) {
-    	while (idx < alternating.size() and alternating[idx].first < i) idx++;    	
-    	if (idx < alternating.size() and oidx < cons.size()) {
-    		// i is not start of alternating
-    		if (i != alternating[idx].first) {
-    			ans[i] = a[i];
+    	// if i is altstart, intervene
+    	auto it = lower_bound(altstarts.begin(), altstarts.end(), i);
+    	if (it != altstarts.end() and *it == i) {	
+    		// intervene
+    		auto itB = lower_bound(cends.begin(), cends.end(), i - 1);
+    		bool bside = (itB != cends.end() and *itB == i - 1);
+    		
+    		int j = *lower_bound(altends.begin(), altends.end(), i);
+    		auto itE = lower_bound(cstarts.begin(), cstarts.end(), j + 1);
+    		
+    		bool eside = (itE != cstarts.end() and *itE == j + 1);
+    		// dbg(i, j);
+    		if (bside and eside) {
+    			// all turn to ones in (j - i) / 2 + 1 turns
+    			res = max(res, (j - i) / 2 + 1);
+    			for (; i < j; i++) {
+    				ans[i] = 1;
+    			}
+    			ans[i] = 1;
+    		}
+    		else if (bside) {
+    			// turn first (j - i) / 2 to 1's, others to 0's
+    			int x = (j - i) / 2;
+    			res = max(res, (j - i) / 2);
+    			for (int k = 0; k < x; k++, i++) {
+    				ans[i] = 1;
+    			}
+    			for (; i < j; i++) {
+    				ans[i] = 0;
+    			}
+    			ans[i] = 0;
+    		}
+    		else if (eside) {
+    			// turn last (j - i) / 2 to 1's 
+    			int x = (j - i) / 2;
+    			res = max(res, x);
+    			i = j;
+    			for (int k = 0;  k < x; k++, j--) {
+    				ans[j] = 1;
+    			}
     		}
     		else {
-    			
+    			// none, therefore, all 0s in (j - i) / 2 moves
+    			res = max(res, (j - i) / 2);
+    			i = j;
     		}
     	}
     	else {
+    		// just place it.
     		ans[i] = a[i];
     	}
     }
+    
+    cout << res << ln;
+    for (auto& i : ans) {
+    	cout << i << " ";
+    }
+    cout << ln;
 }
 
 signed main() {
     fast_cin();
     
     int T = 1;
-    cin >> T;
+    // cin >> T;
     for (int i = 1; i <= T; i++) {
         solve(  );
     }
