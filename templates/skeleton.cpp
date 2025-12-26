@@ -22,11 +22,11 @@ void __f(const char *names, Arg1 &&arg1, Args &&... args) {
 #define int ll
 #define ld long double
 #define pb push_back
-#define INF 2e18
-#define PI 3.14159265358979323846
-#define MOD 1000000007
 
-double eps = 1e-9;
+const ll INF = LLONG_MAX / 4;
+const ld PI = acos(-1);
+const int MOD = 1000000007;
+const double eps = 1e-9;
 
 void solve() {
     
