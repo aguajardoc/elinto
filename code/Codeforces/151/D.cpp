@@ -1,3 +1,11 @@
+// Problem: D. Quantity of Strings
+// Contest: Codeforces - Codeforces Round 107 (Div. 2)
+// URL: https://codeforces.com/contest/151/problem/D
+// Memory Limit: 256 MB
+// Time Limit: 2000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -28,50 +36,44 @@ const ld PI = acos(-1);
 const int MOD = 1000000007;
 const double eps = 1e-9;
 
-vector<vector<int>> AL;
-vector<int> visited;
+// Usage: a^b % m
+long long binexp(long long a, long long b, long long m = 1000000007) {
+    long long res = 1;
+    while (b) {
+        if (b & 1) {
+            res = (res * a) % m;
+        }
 
+        a = (a * a) % m;
+        b >>= 1;
+    }
+
+    return res;
+}
 
 void solve() {
-    int n;
-	cin >> n;
-	AL.assign(n, vector<int>());
-	visited.assign(n, 0);
-	
-	for (int i = 0; i < n - 1; i++) {
-		int u, v;
-		cin >> u >> v;
-		u--, v--;
-		AL[u].pb(v);
-		AL[v].pb(u);
-	}
-	
-	queue<int> q;
-	q.push(0);
-	visited[0] = true;
-	
-	while (!q.empty()) {
-		int u = q.front();
-		q.pop();
-		if (!q.empty() and (int)q.size() % 3 == 0) {
-			cout << "YES" << ln;
-			return;
-		}
-		for (auto& v : AL[u]) {
-			if (visited[v]) continue;
-			visited[v] = true;
-			q.push(v);
-		}
-	}
-	
-	cout << "NO" << ln;
+    int n, m, k;
+    cin >> n >> m >> k;
+    
+    if (k == 1 or n < k) {
+    	cout << binexp(m, n) << ln;
+    }
+    else if (n == k) {
+    	cout << binexp(m, n/2 + n % 2) << ln;
+    }
+    else if (k % 2 == 0) {
+    	cout << m << ln;
+    }
+    else {
+    	cout << m * m << ln;
+    }
 }
 
 signed main() {
     fast_cin();
     
     int T = 1;
-    cin >> T;
+    // cin >> T;
     for (int i = 1; i <= T; i++) {
         solve(  );
     }

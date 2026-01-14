@@ -1,3 +1,11 @@
+// Problem: D. Array Division
+// Contest: Codeforces - Educational Codeforces Round 21
+// URL: https://codeforces.com/contest/808/problem/D
+// Memory Limit: 256 MB
+// Time Limit: 2000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -28,50 +36,52 @@ const ld PI = acos(-1);
 const int MOD = 1000000007;
 const double eps = 1e-9;
 
-vector<vector<int>> AL;
-vector<int> visited;
-
+bool check(vector<int>a, int n, int sum) {
+	set<int> exists;
+	int target = sum/2;
+	for (int i = n - 1; i >= 0; i--) {
+		sum -= a[i];
+		// dbg(i);
+		// dbg(sum, target);
+		// dbg(target - sum);
+		if ((target - sum == 0) or exists.count(target - sum)) return true;
+		
+		exists.insert(a[i]);
+	}
+	return false;
+}
 
 void solve() {
     int n;
-	cin >> n;
-	AL.assign(n, vector<int>());
-	visited.assign(n, 0);
-	
-	for (int i = 0; i < n - 1; i++) {
-		int u, v;
-		cin >> u >> v;
-		u--, v--;
-		AL[u].pb(v);
-		AL[v].pb(u);
-	}
-	
-	queue<int> q;
-	q.push(0);
-	visited[0] = true;
-	
-	while (!q.empty()) {
-		int u = q.front();
-		q.pop();
-		if (!q.empty() and (int)q.size() % 3 == 0) {
-			cout << "YES" << ln;
-			return;
-		}
-		for (auto& v : AL[u]) {
-			if (visited[v]) continue;
-			visited[v] = true;
-			q.push(v);
-		}
-	}
-	
-	cout << "NO" << ln;
+    cin >> n;
+    vector<int> a(n);
+    
+    int sum = 0;
+    for (auto& i : a) {
+    	cin >> i;
+    	sum += i;
+    }
+    
+    
+    if (sum % 2 or n < 2) {
+    	cout << "NO" << ln;
+    	return;
+    }
+    
+    bool res = false;
+    
+    res |= check(a, n, sum);
+    reverse(a.begin(), a.end());
+    res |= check(a, n, sum);
+    
+    cout << (res ? "YES":"NO") << ln;
 }
 
 signed main() {
     fast_cin();
     
     int T = 1;
-    cin >> T;
+    // cin >> T;
     for (int i = 1; i <= T; i++) {
         solve(  );
     }

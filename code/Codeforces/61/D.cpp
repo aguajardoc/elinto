@@ -1,3 +1,11 @@
+// Problem: D. Eternal Victory
+// Contest: Codeforces - Codeforces Beta Round 57 (Div. 2)
+// URL: https://codeforces.com/contest/61/problem/D
+// Memory Limit: 256 MB
+// Time Limit: 2000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -28,50 +36,48 @@ const ld PI = acos(-1);
 const int MOD = 1000000007;
 const double eps = 1e-9;
 
-vector<vector<int>> AL;
-vector<int> visited;
+vector<vector<pair<int, int>>> AL;
+int res = 0;
 
+void dfs(int u, int p, int cw) {
+	bool hasChild = false;
+	
+	for (auto& [v, w] : AL[u]) {
+		if (v == p) continue;
+		
+		hasChild = true;
+		dfs(v, u, w + cw);
+	}
+	
+	if (!hasChild) {
+		res = max(res, cw);
+	}
+}
 
 void solve() {
     int n;
-	cin >> n;
-	AL.assign(n, vector<int>());
-	visited.assign(n, 0);
-	
-	for (int i = 0; i < n - 1; i++) {
-		int u, v;
-		cin >> u >> v;
-		u--, v--;
-		AL[u].pb(v);
-		AL[v].pb(u);
-	}
-	
-	queue<int> q;
-	q.push(0);
-	visited[0] = true;
-	
-	while (!q.empty()) {
-		int u = q.front();
-		q.pop();
-		if (!q.empty() and (int)q.size() % 3 == 0) {
-			cout << "YES" << ln;
-			return;
-		}
-		for (auto& v : AL[u]) {
-			if (visited[v]) continue;
-			visited[v] = true;
-			q.push(v);
-		}
-	}
-	
-	cout << "NO" << ln;
+    cin >> n;
+    AL.assign(n, vector<pair<int, int>> ());
+    int ans = 0;
+    for (int i = 1; i < n; i++) {
+    	int u, v, w;
+    	cin >> u >> v >> w;
+    	u--, v--;
+    	ans += w;
+    	AL[u].pb({v, w});
+    	AL[v].pb({u, w});
+    }
+    
+    dfs(0, -1, 0);
+    
+    cout << 2 * ans - res << ln;
 }
 
 signed main() {
     fast_cin();
     
     int T = 1;
-    cin >> T;
+    // cin >> T;
     for (int i = 1; i <= T; i++) {
         solve(  );
     }

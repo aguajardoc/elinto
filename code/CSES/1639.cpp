@@ -1,3 +1,11 @@
+// Problem: Edit Distance
+// Contest: CSES - CSES Problem Set
+// URL: https://cses.fi/problemset/task/1639
+// Memory Limit: 512 MB
+// Time Limit: 1000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -28,50 +36,33 @@ const ld PI = acos(-1);
 const int MOD = 1000000007;
 const double eps = 1e-9;
 
-vector<vector<int>> AL;
-vector<int> visited;
-
-
 void solve() {
-    int n;
-	cin >> n;
-	AL.assign(n, vector<int>());
-	visited.assign(n, 0);
-	
-	for (int i = 0; i < n - 1; i++) {
-		int u, v;
-		cin >> u >> v;
-		u--, v--;
-		AL[u].pb(v);
-		AL[v].pb(u);
-	}
-	
-	queue<int> q;
-	q.push(0);
-	visited[0] = true;
-	
-	while (!q.empty()) {
-		int u = q.front();
-		q.pop();
-		if (!q.empty() and (int)q.size() % 3 == 0) {
-			cout << "YES" << ln;
-			return;
-		}
-		for (auto& v : AL[u]) {
-			if (visited[v]) continue;
-			visited[v] = true;
-			q.push(v);
-		}
-	}
-	
-	cout << "NO" << ln;
+    string s, t;
+    cin >> s >> t;
+    int n = s.length();
+    int m = t.length();
+    vector<vector<int>> dp(n+1, vector<int> (m + 1, 0));
+    for (int i = 1; i <= n; i++) {
+    	dp[i][0] = i;
+    }
+    for (int i = 1; i <= m; i++) {
+    	dp[0][i] = i;
+    }
+    for (int i = 1; i <= n; i++) {
+    	for (int j = 1; j <= m; j++) {
+    		int cost = (s[i-1] != t[j-1]);
+    		dp[i][j] = min({dp[i-1][j-1] + cost, dp[i-1][j] + 1, dp[i][j-1] + 1});
+    	}
+    }
+    
+    cout << dp[n][m] << ln;
 }
 
 signed main() {
     fast_cin();
     
     int T = 1;
-    cin >> T;
+    // cin >> T;
     for (int i = 1; i <= T; i++) {
         solve(  );
     }

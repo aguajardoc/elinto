@@ -1,3 +1,11 @@
+// Problem: Kompići
+// Contest: SPOJ - Classical
+// URL: https://www.spoj.com/problems/KOMPICI/
+// Memory Limit: 1536 MB
+// Time Limit: 1000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -28,50 +36,53 @@ const ld PI = acos(-1);
 const int MOD = 1000000007;
 const double eps = 1e-9;
 
-vector<vector<int>> AL;
-vector<int> visited;
-
-
 void solve() {
     int n;
-	cin >> n;
-	AL.assign(n, vector<int>());
-	visited.assign(n, 0);
-	
-	for (int i = 0; i < n - 1; i++) {
-		int u, v;
-		cin >> u >> v;
-		u--, v--;
-		AL[u].pb(v);
-		AL[v].pb(u);
-	}
-	
-	queue<int> q;
-	q.push(0);
-	visited[0] = true;
-	
-	while (!q.empty()) {
-		int u = q.front();
-		q.pop();
-		if (!q.empty() and (int)q.size() % 3 == 0) {
-			cout << "YES" << ln;
-			return;
-		}
-		for (auto& v : AL[u]) {
-			if (visited[v]) continue;
-			visited[v] = true;
-			q.push(v);
+    cin >> n;
+    int ct1[1024], ct2[1024];
+    for (auto& i : ct1) i = 0;
+    for (auto& i : ct2) i = 0;
+    for (int i = 0; i < n; i++) {
+    	string s;
+    	cin >> s;
+    	int mask = 0;
+    	for (auto& j : s) {
+    		mask |= (1ll << (j - '0'));
+    	}
+    	
+    	ct1[mask]++;
+    }
+    
+    for (int j = 1; j < (1ll << 10); j++) {
+		for (int i = 1; i < (1ll << 10); i++) {
+			if ((i & j) == j) {
+				ct2[j] += ct1[i];
+			}
 		}
 	}
-	
-	cout << "NO" << ln;
+    
+    // i guess?
+    int ans = 0;
+    for (int i = 1; i < 1024; i++) {
+    	int x = __builtin_popcount(i);
+    	int y = ct2[i];
+    	
+    	// if (ct[i])dbg(i, ct[i]);
+    	
+    	if (x % 2) {
+    		ans += (y * (y - 1)) / 2;
+    	}
+    	else ans -= (y * (y - 1)) / 2;
+    }
+    
+    cout << ans << ln;
 }
 
 signed main() {
     fast_cin();
     
     int T = 1;
-    cin >> T;
+    // cin >> T;
     for (int i = 1; i <= T; i++) {
         solve(  );
     }

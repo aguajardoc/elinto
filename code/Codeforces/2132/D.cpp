@@ -1,3 +1,11 @@
+// Problem: D. From 1 to Infinity
+// Contest: Codeforces - Codeforces Round 1043 (Div. 3)
+// URL: https://codeforces.com/contest/2132/problem/D
+// Memory Limit: 256 MB
+// Time Limit: 1500 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -28,172 +36,85 @@ const ld PI = acos(-1);
 const int MOD = 1000000007;
 const double eps = 1e-9;
 
-int getDigsum(int x, int y) {
-	int ans = 0;
-	
-	string s = to_string(x);
-	for (int i = 0; i < y; i++) {
-		ans += (s[i] - '0');
-	}
-	
-	return ans;
-}
+vector<int> digct = {9};
 
-vector<int> digsum;
-vector<int> digcount;
-vector<int> pow10;
-
-int getSOD(int x, int i) {
+int getRes(int x) {
+	string left = to_string(x);
+	string right = left;
+	for (auto& i : left) i = '0';
+	
 	int ans = 0;
-	string left;
-	string right;
-	int mult = pow10[i];
+	int teni = 1;
+	while (teni <= x) teni*= 10;
+	teni /= 10;
 	
-	left = to_string(x);
-	right = to_string(x);
-	int n = left.length();
-	
-	vector<int> occ(10, 0);
-	
-	string cum;
-	
-	for (int i = 0; i < n; i++) {
-		int dig = (left[i] - '0');
-		string leftn = left.substr(0, i);
+	int n = left.size();
+	for (int i = 0; i < n; i++, teni/=10) {
+		int leftn = 0;
+		if (i)leftn = stoll(left.substr(0, i), NULL, 10);
+		int d = (right[i] - '0');
 		
+		left[i] = right[i];
 		right[i] = '0';
+		
+		int rightn = stoll(right, NULL, 10);
 		for (int j = 1; j <= 9; j++) {
-			if (i == 0) {
-				if (j < dig) {
-					occ[j] += mult;
-				}
-				else if (j == dig) {
-					occ[j] += stoll(right, NULL, 10) + 1;
-				}
+			// If before digit: 10^i * left + 1
+			if (j < d) {
+				ans += j * ((teni) * (leftn  + 1));
+			}
+			// If cur: 
+			else if (j == d) {
+				ans += j * (teni * leftn + rightn + 1);
 			}
 			else {
-				string cur = left.substr(0, i + 1);
-				int leftS = stoll(cur);
-				cur.back() = (j + '0');
-				int now = stoll(cur);
-				
-				// dbg(leftS, now);
-				int times = mult/10;
-				if (now < leftS) {
-					string oth = cur;
-					oth.back() = '1';
-					int help = stoll(oth);
-					
-					int d = leftS - help;
-					// dbg(times * d);
-					occ[j] += times * d;
-				}
-				else if (now == leftS) {
-					string oth = cur;
-					oth.back() = '2';
-					int help = stoll(oth);
-					
-					int d = leftS - help;
-					int r = times * d + stoll(right, NULL, 10) + 1;
-					// dbg(r);
-					occ[j] += r;
-				}
-				else {
-					string oth = cur;
-					oth.back() = '2';
-					int help = stoll(oth);
-					
-					int d = leftS - help;
-					int r = times * d;
-					// dbg(r);
-					occ[j] += r;
-				}
+				ans += j * (teni * leftn);
 			}
 			
+			// dbg(j, ans);
 		}
-		
-		if (i) cum += '0';
-		else cum += '1';
 	}
 	
-	for (int i = 1; i <= 9; i++) {
-		ans += occ[i] * i;
-	}
 	
 	return ans;
 }
 
-void brute (int l, int r) {
-	vector<vector<int>> occ(10, vector<int> (10, 0));
-	
-	for (int i = l; i <= r; i++) {
-		string s= to_string(i);
-		for (int j = 0; j < s.length(); j++) {
-			occ[(s[j] - '0')][j]++;
-		}
-	}
-	
-	for (auto& i : occ) {
-		for (auto& j : i) {
-			cout << j << " ";
-		}
-		cout << ln;
-	}
-}
-
-
 void solve() {
-	int k;
-	cin >> k;
+    int k;
+    cin >> k;
     
-    // SOD from 1 to pow(10, i) - 1 = 45 * pow(10, i-1) * i
-    // # of digits up to pow(10, i) - 1 = sum of 9 * i * pow(10, i - 1)
-    
-    // Get up to previous power
-    int ans = 0;
+    // Get previous power of 10
+    int pow = 1;
     int i = 0;
-    for (; i < digsum.size(); i++) {
-    	if (digcount[i] > k) {
-    		i--;
-    		ans += digsum[i];
-    		k -= digcount[i];
-    		break;
-    	}
+    while (digct[i] <= k) {
+    	pow *= 10;
+    	i++;
     }
+    // dbg(i, pow);
     
-    // Add surplus
-    int fullNum = k / (i + 1);
-    int left = pow10[i] - 1;
-    int right = pow10[i] + fullNum - 1;
-    int extra = k % (i + 1);
+    // Get remaining digit count
+    int rem = k;
+    if (i) rem = (k - digct[i-1]);
+    // Get remaining number count
+    int R = pow + rem / (i + 1) - 1;
+    int extra = rem % (i + 1);
+    // dbg(R, extra);
+    // Get full answer up to R
+    int ans = getRes(R);
     
-    dbg(right);
-    brute(left + 1, right);
-    
-    int surplusFull = 0;
-    if (right > left) surplusFull = getSOD(right, i);
-    int surplusExtra = getDigsum(right + 1, extra);
-    
-    ans += surplusFull + surplusExtra;  
-    dbg(surplusFull); 
+    string s = to_string(R + 1);
+    for (int j = 0; j < extra; j++) {
+    	ans += (s[j] - '0');
+    }
     
     cout << ans << ln;
 }
 
 signed main() {
     fast_cin();
-    int cpow = 1;
-    int prev = 0;
-    digsum = {0};
-    digcount = {0};
-    for (int i = 1; i <= 15; i++, cpow *= 10) {
-    	digsum.pb(45 * cpow * i);
-    	int cur = 9 * i * cpow;
-    	
-    	cur += prev;
-    	digcount.pb(cur);
-    	pow10.pb(cpow);
-    	prev = cur;
+    int cur = 10;
+    for (int i = 1; i < 17; i++, cur *= 10) {
+    	digct.pb(digct.back() + 9ll * (i + 1ll) * cur);
     }
     
     int T = 1;
