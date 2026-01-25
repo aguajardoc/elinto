@@ -1,3 +1,11 @@
+// Problem: C. Plant
+// Contest: Codeforces - Codeforces Round 118 (Div. 2)
+// URL: https://codeforces.com/contest/186/problem/C
+// Memory Limit: 256 MB
+// Time Limit: 2000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -28,74 +36,70 @@ const ld PI = acos(-1);
 const int MOD = 1000000007;
 const double eps = 1e-9;
 
-vector<vector<int>> ans;
+using Matrix = array<array<int, 2>, 2>;
 
-bool check(vector<int>& a, int n) {
-	// if (a.back() != 3) return false;
-	// for (int i = 0; i <n - 1; i++) {
-		// bool poss = false;
-		// for (int j = i; j < n; j++) {
-			// if ((a[i] ^ a[j]) == (i + 1)) poss = true;
-		// }
-// 		
-		// if (!poss) return false;
-	// }
+Matrix A;
+
+Matrix mult(Matrix A, Matrix B) {
+	Matrix ans;
+	ans[0][0] = 0;
+	ans[0][1] = 0;
+	ans[1][0] = 0;
+	ans[1][1] = 0;
 	
-	for (int i = 1; i <n - 1; i++) {
-		bool poss = false;
-		for (int j = i; j < n; j++) {
-			if ((a[i] ^ a[j]) == (i + 1)) poss = true;
-		}
-		
-		if (!poss) return false;
+	for (int i = 0; i < 2; i++) 
+	for (int j = 0; j < 2; j++) 
+	for (int k = 0; k < 2; k++) {
+		ans[i][j] += A[i][k] * B[k][j];
+		ans[i][j] %= MOD;
 	}
 	
-	// for (auto& i : a) {
-    	// // for (auto& j : i) {
-    		// cout << i - 1 << " ";
-    	// // }
-    	// cout << ln << flush;
-    // }
-	return true;
+	return ans;
 }
 
-void recurse(int idx, int n, vector<int>& cur) {
+Matrix binexp(Matrix A, int k) {
+	Matrix res;
+	res[0][0] = 1;
+	res[0][1] = 0;
+	res[1][0] = 0;
+	res[1][1] = 1;
 	
-	if (idx == n) {
-		if (check(cur, n)) ans.pb(cur);
-		return;
-	}
-	
-	for (int i = 1; i <= n; i++) {
-		if (find(cur.begin(), cur.end(), i) != cur.end()) continue;
+	while (k) {
+		if (k & 1) {
+			res = mult(res, A);
+		}
 		
-		cur.pb(i);
-		recurse(idx + 1, n, cur);
-		cur.pop_back();
+		A = mult(A, A);
+		k >>= 1;
 	}
+	
+	return res;
 }
 
 void solve() {
     int n;
     cin >> n;
-    ans.clear();
-    vector<int> c;
-    recurse(0, n, c);
     
-    for (auto& i : ans) {
-    	for (auto& j : i) {
-    		cout << j - 1 << " ";
-    	}
-    	cout << ln;
-    }
+    A[0][0] = 2;
+    A[0][1] = 1;
+    A[1][0] = 0;
+    A[1][1] = 4;
     
+    Matrix res = binexp(A, n);
+    
+    // dbg(res[0][0]);
+    // dbg(res[0][1]);
+    // dbg(res[1][0]);
+    // dbg(res[1][1]);
+    
+    cout << (res[0][0] + res[0][1]) % MOD << ln;
 }
 
 signed main() {
     fast_cin();
     
     int T = 1;
-    cin >> T;
+    // cin >> T;
     for (int i = 1; i <= T; i++) {
         solve(  );
     }
