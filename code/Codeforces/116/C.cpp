@@ -1,8 +1,8 @@
-// Problem: D. Good Sequences
-// Contest: Codeforces - Codeforces Round 162 (Div. 2)
-// URL: https://codeforces.com/contest/265/problem/D
+// Problem: C. Party
+// Contest: Codeforces - Codeforces Beta Round 87 (Div. 2 Only)
+// URL: https://codeforces.com/contest/116/problem/C
 // Memory Limit: 256 MB
-// Time Limit: 2000 ms
+// Time Limit: 3000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -36,73 +36,47 @@ const ld PI = acos(-1);
 const int MOD = 1000000007;
 const double eps = 1e-9;
 
-// Usage: sieve(); p -> list of primes up to N
-const int N = 100000;
-bitset<N + 1> bs;
-vector<int> p;
-
-void sieve() {
-    bs.set();
-    bs[0] = bs[1] = false;
-
-    for (long long i = 2; i <= N; i++) {
-        if (!bs[i]) continue;
-        for (long long j = i * i; j <= N; j += i) bs[j] = false;
-        p.push_back(i);
-    }
-}
-
-vector<int> getPfac(int x) {
-	vector<int> r;
-	for (int i = 0; p[i] * p[i] <= x; i++) {
-		bool f = false;
-		while (x % p[i] == 0) {
-			x/=p[i];
-			f=1;
-		}
-		if(f)r.pb(p[i]);
-	}
-	
-	if (x > 1) r.pb(x);
-	
-	return r;
-}
-
 void solve() {
-	int n;
+    int n;
     cin >> n;
-    vector<int> a;
-    a.assign(n, 0);
-    for (auto& i : a) cin >> i;
-    vector<int> d(1e5 + 1, 0);
-    int ans = 1;
-    
+    vector<vector<int>> AL(n);
+    vector<int> roots;
     for (int i = 0; i < n; i++) {
-    	vector<int> facs = getPfac(a[i]);
+    	int x;
+    	cin >> x;
+    	if (x == -1) roots.pb(i);
+    	else AL[x-1].pb(i);
+    }
+    
+    vector<int> dist(n, 1e9);
+    queue<int> q;
+    for (auto& i : roots) {
+    	dist[i] = 0;
+    	q.push(i);
+    }
+    
+    while (!q.empty()) {
+    	int u = q.front();
+    	q.pop();
     	
-    	int mx = 0;
-    	for (auto& j : facs) {
-    		d[j]++;
-    		mx = max(mx, d[j]);
-    	}
-    	for (auto& j : facs){
-    		d[j] = mx;
+    	for (auto& v : AL[u]) {
+    		if (dist[v] != 1e9) continue;
+    		dist[v] = dist[u] + 1;
+    		q.push(v);
     	}
     }
     
-    for (int i = 0; i <= 1e5; i++) {
-    	if (d[i]) {
-    		// dbg(i, d[i]);
-    		ans = max(ans, d[i]);
-    	}
+    int ans = 0;
+    for (auto& i : dist) {
+    	ans = max(ans, i);
     }
     
+    ans++;
     cout << ans << ln;
 }
 
 signed main() {
     fast_cin();
-    sieve();
     
     int T = 1;
     // cin >> T;
