@@ -97,9 +97,9 @@ void solve() {
     	ans = 0;
     	dfs(0, 0, trie);
     	// dbg(ans);
-    	int res = round(1.0*100 * ans / n);
-    	string x = to_string(res);
-    	cout << x[0] << '.' << x[1] << x[2] << ln;
+    	ld res = 1.0 * ans / n;
+    	
+    	cout << fixed << setprecision(2) << res << ln;
     }
 }
 
