@@ -1,6 +1,5 @@
 // Usage: pass in a vector of parents to initialize
-// Nodes are 1-indexed, but parent indices are 0-indexed
-// Queries are also 1-indexed
+// Everything is 0-indexed
 class Tree {
   // From USACO Guide
   private:
@@ -10,10 +9,9 @@ class Tree {
   
   public:
 	Tree(const vector<int> &parents)
-	    : log2dist(std::ceil(std::log2(parents.size() + 1))), par(parents.size() + 1),
-	      pow2ends(par.size(), vector<int>(log2dist + 1)) {
-		par[0] = -1;
-		for (int i = 0; i < parents.size(); i++) { par[i + 1] = parents[i]; }
+	    : log2dist(std::ceil(std::log2(parents.size() + 1))), par(parents),
+	      pow2ends(parents.size(), vector<int>(log2dist + 1)) {
+		
 		// pow2ends[n][k] contains the 2^kth parent of node n
 		// if there is no 2^kth parent, the value is -1
 		for (int n = 0; n < par.size(); n++) { pow2ends[n][0] = par[n]; }
