@@ -1,6 +1,6 @@
-// Problem: C. Stamina and Tasks
-// Contest: Codeforces - Codeforces Round 1086 (Div. 2)
-// URL: https://codeforces.com/contest/2208/problem/C
+// Problem: B. White Magic
+// Contest: Codeforces - Codeforces Round 1004 (Div. 1)
+// URL: https://codeforces.com/contest/2066/problem/B
 // Memory Limit: 256 MB
 // Time Limit: 2000 ms
 // 
@@ -36,24 +36,58 @@ const ld PI = acos(-1);
 const int MOD = 1000000007;
 const double eps = 1e-9;
 
+vector<int> suffmex(vector<int> a) {
+	int n = a.size();
+	vector<int> mex(n, 0);
+	set<int> inc;
+	int cur = 0;
+	
+	for (int i = n - 1; i >= 0; i--) {
+		inc.insert(a[i]);
+		while (inc.count(cur)) {
+			cur++;
+		}
+		mex[i] = cur;
+	}
+	
+	return mex;
+}
+
+bool magical(vector<int> a) {
+	int n = a.size();
+	vector<int> mex = suffmex(a);
+	int cm = a[0];
+	
+	for (int i = 1; i < n - 1; i++) {
+		// dbg(i);
+		// dbg(cm, mex[i]);
+		if (cm < mex[i]) return false;
+		cm = min(cm, a[i]);
+	}
+	
+	return true;
+}
+
 void solve() {
     int n;
     cin >> n;
-    vector<int> p(n), c(n);
-    ld S = 1;
-    int sum = 0;
+    vector<int> a(n);
+    for (auto& i : a) cin >> i;
+    vector<int> new_a;
+    bool zinc = 0;
     for (int i = 0; i < n; i++) {
-    	cin >> c[i] >> p[i];
-    	sum += c[i];
+    	if (a[i]) new_a.pb(a[i]);
+    	else if (!zinc) {
+    		zinc = 1;
+    		new_a.pb(0);
+    	}
     }
     
-    vector<ld> dp(n + 67, 0);
-    for (int i = n - 1; i >= 0; i--) {
-    	dp[i] = max(dp[i+1], dp[i+1] * ((ld)1 - (ld)p[i]/(ld)100) + c[i]);
-    }
+    int ans = new_a.size();
     
-    cout << fixed << setprecision(10) << dp[0] << ln;
+    if (!magical(new_a)) ans--;
     
+    cout << ans << ln;
 }
 
 signed main() {

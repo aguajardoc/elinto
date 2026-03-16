@@ -1,8 +1,8 @@
-// Problem: C. Stamina and Tasks
-// Contest: Codeforces - Codeforces Round 1086 (Div. 2)
-// URL: https://codeforces.com/contest/2208/problem/C
-// Memory Limit: 256 MB
-// Time Limit: 2000 ms
+// Problem: G. Card deck
+// Contest: Codeforces - ICPC Central Russia Regional Contest, 2025
+// URL: https://codeforces.com/gym/106189/problem/G
+// Memory Limit: 64 MB
+// Time Limit: 500 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -37,30 +37,44 @@ const int MOD = 1000000007;
 const double eps = 1e-9;
 
 void solve() {
-    int n;
-    cin >> n;
-    vector<int> p(n), c(n);
-    ld S = 1;
-    int sum = 0;
+    int n, k;
+    cin >> n >> k;
+    
+    int ans = 0;
+    vector<int> pilect(n, 0), cum(n+1, 0);
     for (int i = 0; i < n; i++) {
-    	cin >> c[i] >> p[i];
-    	sum += c[i];
+    	pilect[i%k]++;
+    }
+    for (int i = 1; i <= n; i++) {
+    	cum[i] = cum[i-1] + pilect[i-1];
     }
     
-    vector<ld> dp(n + 67, 0);
-    for (int i = n - 1; i >= 0; i--) {
-    	dp[i] = max(dp[i+1], dp[i+1] * ((ld)1 - (ld)p[i]/(ld)100) + c[i]);
+    
+    for (int i = 1; i <= n; i++) {
+    	int P = (i-1) % k, E = cum[(i-1)%k] + n/k - (i-1)/k + (P < n % k);
+    	int it = 1;
+    	
+    	// dbg(i, P, E);
+    	
+    	while (E != i) {
+    		P = (E-1) % k, E = cum[(E-1)%k] + n/k - (E-1)/k + (P < n % k);
+    		it++; 		
+    		// dbg(i, P, E);
+    	}
+    	
+    	// dbg(it);
+    	if (ans == 0) ans = it;
+    	else ans = lcm(ans, it);
     }
     
-    cout << fixed << setprecision(10) << dp[0] << ln;
-    
+    cout << ans << ln;
 }
 
 signed main() {
     fast_cin();
     
     int T = 1;
-    cin >> T;
+    // cin >> T;
     for (int i = 1; i <= T; i++) {
         solve(  );
     }

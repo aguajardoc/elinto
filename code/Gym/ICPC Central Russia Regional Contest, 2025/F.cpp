@@ -1,8 +1,8 @@
-// Problem: C. Stamina and Tasks
-// Contest: Codeforces - Codeforces Round 1086 (Div. 2)
-// URL: https://codeforces.com/contest/2208/problem/C
+// Problem: F. Classic Tetris: Scoring
+// Contest: Codeforces - ICPC Central Russia Regional Contest, 2025
+// URL: https://codeforces.com/gym/106189/problem/F
 // Memory Limit: 256 MB
-// Time Limit: 2000 ms
+// Time Limit: 1000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -39,28 +39,55 @@ const double eps = 1e-9;
 void solve() {
     int n;
     cin >> n;
-    vector<int> p(n), c(n);
-    ld S = 1;
-    int sum = 0;
+    
+    int sp = 760;
+    int dp = 1900;
+    int tp = 5700;
+    int qp = 22800;
+    int thresh = 130;
+    int rows = 0;
+    int level = 18;
+    int points = 0;
+    
     for (int i = 0; i < n; i++) {
-    	cin >> c[i] >> p[i];
-    	sum += c[i];
+    	string s;
+    	cin >> s;
+    	
+    	if (s == "single") {
+    		rows += 1;
+    		points += sp;
+    	}
+    	if (s == "double") {
+    		rows += 2;
+    		points += dp;
+    	}
+    	if (s == "triple") {
+    		rows += 3;
+    		points += tp;
+    	}
+    	if (s == "tetris") {
+    		rows += 4;
+    		points += qp;
+    	}
+    	
+    	if (rows >= thresh) {
+    		thresh += 10;
+    		sp += 40;
+    		dp += 100;
+    		tp += 300;
+    		qp += 1200;
+    		level++;
+    	}
     }
     
-    vector<ld> dp(n + 67, 0);
-    for (int i = n - 1; i >= 0; i--) {
-    	dp[i] = max(dp[i+1], dp[i+1] * ((ld)1 - (ld)p[i]/(ld)100) + c[i]);
-    }
-    
-    cout << fixed << setprecision(10) << dp[0] << ln;
-    
+    cout << points << " " << level << ln;
 }
 
 signed main() {
     fast_cin();
     
     int T = 1;
-    cin >> T;
+    // cin >> T;
     for (int i = 1; i <= T; i++) {
         solve(  );
     }

@@ -1,8 +1,8 @@
-// Problem: C. Stamina and Tasks
-// Contest: Codeforces - Codeforces Round 1086 (Div. 2)
-// URL: https://codeforces.com/contest/2208/problem/C
-// Memory Limit: 256 MB
-// Time Limit: 2000 ms
+// Problem: F1. Korney Korneevich and XOR (easy version)
+// Contest: Codeforces - Codeforces Round 750 (Div. 2)
+// URL: https://codeforces.com/contest/1582/problem/F1
+// Memory Limit: 512 MB
+// Time Limit: 1500 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -39,28 +39,55 @@ const double eps = 1e-9;
 void solve() {
     int n;
     cin >> n;
-    vector<int> p(n), c(n);
-    ld S = 1;
-    int sum = 0;
+    vector<int> a(n);
+    vector<int> ctLR(520, 0);
+    for (auto& i : a) {
+    	cin >> i;
+    	ctLR[i]++;
+    }
+    vector<int> ctRL(520, 0);
+    set<int> res;
+    res.insert(0);
+    vector<int> mn(550, INF);
+    mn[0] = 0;
+    
     for (int i = 0; i < n; i++) {
-    	cin >> c[i] >> p[i];
-    	sum += c[i];
+    	ctLR[a[i]]--;
+    	
+    	vector<int> nl;
+    	nl.pb(a[i]);
+    	res.insert(a[i]);
+    	mn[a[i]] = min(mn[a[i]], a[i]);
+    	
+    	for (int j = 0; j <= 520; j++) {
+    		if (mn[j] < a[i]) {
+    			int x = a[i] ^ j;
+    			
+    			if (a[i] < mn[x]) {
+    				mn[x] = a[i];
+    				nl.pb(x);
+    				res.insert(x);
+    			}
+    		}
+    	}
+    	
+
+    	
+    	ctRL[a[i]]++;
     }
     
-    vector<ld> dp(n + 67, 0);
-    for (int i = n - 1; i >= 0; i--) {
-    	dp[i] = max(dp[i+1], dp[i+1] * ((ld)1 - (ld)p[i]/(ld)100) + c[i]);
+    cout << res.size() << ln;
+    for (auto& i : res) {
+    	cout << i << " ";
     }
-    
-    cout << fixed << setprecision(10) << dp[0] << ln;
-    
+    cout << ln;
 }
 
 signed main() {
     fast_cin();
     
     int T = 1;
-    cin >> T;
+    // cin >> T;
     for (int i = 1; i <= T; i++) {
         solve(  );
     }

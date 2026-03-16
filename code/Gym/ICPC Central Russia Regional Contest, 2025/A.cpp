@@ -1,6 +1,6 @@
-// Problem: C. Stamina and Tasks
-// Contest: Codeforces - Codeforces Round 1086 (Div. 2)
-// URL: https://codeforces.com/contest/2208/problem/C
+// Problem: A. Wallpaper
+// Contest: Codeforces - ICPC Central Russia Regional Contest, 2025
+// URL: https://codeforces.com/gym/106189/problem/A
 // Memory Limit: 256 MB
 // Time Limit: 2000 ms
 // 
@@ -37,30 +37,23 @@ const int MOD = 1000000007;
 const double eps = 1e-9;
 
 void solve() {
-    int n;
-    cin >> n;
-    vector<int> p(n), c(n);
-    ld S = 1;
-    int sum = 0;
+    int n, k;
+    cin >> n >> k;
+    int ans = 0;
     for (int i = 0; i < n; i++) {
-    	cin >> c[i] >> p[i];
-    	sum += c[i];
+    	int x;
+    	cin >> x;
+    	ans += (x / k) + min(1ll, x % k);
     }
     
-    vector<ld> dp(n + 67, 0);
-    for (int i = n - 1; i >= 0; i--) {
-    	dp[i] = max(dp[i+1], dp[i+1] * ((ld)1 - (ld)p[i]/(ld)100) + c[i]);
-    }
-    
-    cout << fixed << setprecision(10) << dp[0] << ln;
-    
+    cout << ans << ln;
 }
 
 signed main() {
     fast_cin();
     
     int T = 1;
-    cin >> T;
+    // cin >> T;
     for (int i = 1; i <= T; i++) {
         solve(  );
     }
