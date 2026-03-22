@@ -68,7 +68,7 @@ struct Trie {
 				trie.pb(Node());
 				
 				// Found better answer
-				if (i < bestDiv and not diverted and trie[cur].next[1-v] != -1) {
+				if (i <= bestDiv and not diverted and trie[cur].next[1-v] != -1) {
 					bestDiv = i;
 					diverted = true;
 					// Go down the other path and retrieve node
