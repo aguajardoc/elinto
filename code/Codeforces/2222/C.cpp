@@ -1,0 +1,106 @@
+// Problem: Median Partition
+// Contest: Codeforces
+// URL: https://m1.codeforces.com/contest/2222/problem/C
+// Memory Limit: 256 MB
+// Time Limit: 2000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ln "\n"
+#define fast_cin() \
+    ios_base::sync_with_stdio(false); \
+    cin.tie(NULL)
+#define iofiles() \
+    freopen("input.in", "r", stdin); \
+    freopen("output.out", "w", stdout)
+#define dbg(...) __f(#__VA_ARGS__, __VA_ARGS__)
+template <typename Arg1>
+void __f(const char *name, Arg1 &&arg1) { cout << name << ": " << arg1 << endl; }
+template <typename Arg1, typename... Args>
+void __f(const char *names, Arg1 &&arg1, Args &&... args) {
+    const char *comma = strchr(names + 1, ',');
+    cout.write(names, comma - names) << ": " << arg1 << " |";
+    __f(comma + 1, args...);
+}
+
+#define ll long long
+// #define int ll
+#define ld long double
+#define pb push_back
+
+const ll INF = LLONG_MAX / 4;
+const ld PI = acos(-1);
+const int MOD = 1000000007;
+const double eps = 1e-9;
+
+void solve() {
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    vector<vector<bool>> medians(n+1, vector<bool> (n+1, 0)); 
+    vector<vector<int>> dp(n+1, vector<int> (n+1, 0));
+    
+    for (auto& i : a) cin >> i;
+    
+    vector<int> so = a;
+    sort(so.begin(), so.end());
+    int target = so[n/2];
+    
+    for (int i = 0; i < n; i++) {
+    	int lt = 0, gt = 0, eq = 0;
+    	for (int j = i; j < n; j++) {
+    		if (a[j] == target) eq++;
+    		else if (a[j] < target) lt++;
+    		else gt++;
+    		
+    		if ((j - i) % 2 == 0) {
+    			int ele = (j - i + 1);
+    			
+    			if (lt <= ele/2 and lt + eq > ele/2) {
+    				medians[i][j] = 1;
+    				// dbg(i, j);
+    			}
+    		}
+    	}
+    }
+    
+    vector<int> bests(n + 1, 0);
+    int ans = 0;
+    for (int i = 0; i < n; i++) {
+    	for (int j = 0; j < n; j++) {
+    		if (medians[i][j]) {
+    			dp[i][j] = bests[i] + 1;
+    			
+    			if (i != 0 and dp[i][j] == 1) dp[i][j] = 0;
+    			bests[j+1] = max(bests[j+1], dp[i][j]);
+    			
+    			// dbg(i, j);
+    			// dbg(dp[i][j]);
+    			// cout << ln;
+    		}
+    	}
+    }
+    
+    for (int i = 0; i < n; i++) {
+    	ans = max(ans, dp[i][n - 1]);
+    }
+    
+    cout << ans << ln;
+    
+}
+
+signed main() {
+    fast_cin();
+    
+    int T = 1;
+    cin >> T;
+    for (int i = 1; i <= T; i++) {
+        solve(  );
+    }
+
+    return 0;
+}
+// g++ A.cpp && ./a.out <input.in>output.out
