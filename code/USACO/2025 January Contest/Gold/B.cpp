@@ -42,13 +42,14 @@ typedef vector<int> vi;
 class UnionFind {                                // OOP style
 private:
 public:
-vi p, rank, setSize;                           // vi p is the key part
+vi p, rank, setSize, active;                           // vi p is the key part
   int numSets;
   int ans = 0;
   UnionFind(int N) {
     p.assign(N, 0); for (int i = 0; i < N; ++i) p[i] = i;
     rank.assign(N, 0);                           // optional speedup
     setSize.assign(N, 1);                        // optional feature
+    active.assign(N, 0);
     numSets = N;                                 // optional feature
   }
 
@@ -65,13 +66,21 @@ vi p, rank, setSize;                           // vi p is the key part
     p[x] = y;                                    // set x under y
    
     if (rank[x] == rank[y]) ++rank[y];           // optional speedup
-   	ans -= ((setSize[x]) * (setSize[x] - 1)) / 2;
-   	ans -= ((setSize[y]) * (setSize[y] - 1)) / 2;
+   	
    	// dbg(i, j);
    	// dbg(setSize[x], setSize[y]);
+   	ans -= (active[x] * (active[x]-1)) / 2;
+   	ans -= (active[y] * (active[y]-1)) / 2;
+   	active[y] += active[x];
+   	ans += (active[y] * (active[y]-1)) / 2;
    	setSize[y] += setSize[x];                    // combine set sizes at y
-    ans += ((setSize[y]) * (setSize[y] - 1)) / 2;
+    
     --numSets;                                   // a union reduces numSets
+  }
+  
+  void setActive(int i) {
+  	active[findSet(i)]++;
+  	ans += active[findSet(i)] - 1;
   }
 };
 
@@ -81,67 +90,50 @@ void solve() {
     string s;
     cin >> s;
     
-    vector<vector<int>> AL(2*n), NAL = AL;
-    
-    UnionFind prev(n);
+    UnionFind dsu(n);
+    vector<vector<int>> AL(n);
+    vector<int> avail(n, 0);
     
     for (int i = 0; i < m; i++) {
     	int u, v;
     	cin >> u >> v;
     	u--, v--;
-    	
-    	prev.unionSet(u, v);
-    	
     	AL[u].pb(v);
     	AL[v].pb(u);
     }
     
-    UnionFind dsu(2*n);
-    
-    for (int u = 0; u < n; u++) {
-    	if (s[u] == '1') {
-    		int superNode = prev.findSet(u);
-    		NAL[u].pb(n + superNode);
-    		NAL[n + superNode].pb(u);
-	    	for (auto& v : AL[u]) {
-	    		NAL[n + superNode].pb(v);
-	    		NAL[v].pb(n + superNode);
-	    	}
-	    }
-	    else {
-	    	for (auto& v : AL[u]) {
-	    		NAL[u].pb(v);
-	    		NAL[v].pb(u);
-	    	}
-	    }
-    }
-    
-    
-    for (int i = n; i < 2 * n; i++) {
-    	dsu.setSize[i] = 0;
-    }
-    
-    vector<int> ans(n, 0);
-    for (int i = n - 1; i >= 0; i--) {
+    for (int i = 0; i < n; i++) {
     	if (s[i] == '1') {
-    		int superNode = prev.findSet(i);
-    		dsu.unionSet(n+superNode, i);
-    		for (auto& v : NAL[n+i]) {
-    			if (v > i) dsu.unionSet(n+superNode, v);
+    		avail[i] = true;
+    	}
+    }
+    
+    for (int i = 0; i < n; i++) {
+    	if (avail[i]) {
+    		for (auto& v : AL[i]) {
+    			if (avail[v]) dsu.unionSet(i, v);
     		}
     	}
-    	else {
-    		for (auto& v : NAL[i]) {
-    			if (v > i) dsu.unionSet(i, v);
+    }
+    
+    vector<int> ans(n,0);
+    
+    for (int i = n - 1; i >= 0; i--) {
+    	if (s[i] == '0') {
+    		avail[i] = true;
+    		for (auto& j : AL[i]) {
+    			if (avail[j]) dsu.unionSet(i, j);
     		}
     	}
     	
+    	dsu.setActive(i);
     	ans[i] = dsu.ans;
     }
     
-    for (auto& i : ans) {
-    	cout << i << ln;
+    for (int i = 0; i < n; i++) {
+    	cout << ans[i] << ln;
     }
+    
 }
 
 signed main() {
