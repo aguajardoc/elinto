@@ -1,0 +1,115 @@
+// Problem: C. Secret message
+// Contest: Codeforces - Codeforces Round 1078 (Div. 2)
+// URL: https://codeforces.com/contest/2194/problem/C
+// Memory Limit: 256 MB
+// Time Limit: 2000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ln "\n"
+#define fast_cin() \
+    ios_base::sync_with_stdio(false); \
+    cin.tie(NULL)
+#define iofiles() \
+    freopen("input.in", "r", stdin); \
+    freopen("output.out", "w", stdout)
+#define dbg(...) __f(#__VA_ARGS__, __VA_ARGS__)
+template <typename Arg1>
+void __f(const char *name, Arg1 &&arg1) { cout << name << ": " << arg1 << endl; }
+template <typename Arg1, typename... Args>
+void __f(const char *names, Arg1 &&arg1, Args &&... args) {
+    const char *comma = strchr(names + 1, ',');
+    cout.write(names, comma - names) << ": " << arg1 << " |";
+    __f(comma + 1, args...);
+}
+
+#define ll long long
+// #define int ll
+#define ld long double
+#define pb push_back
+
+const ll INF = LLONG_MAX / 4;
+const ld PI = acos(-1);
+const int MOD = 1000000007;
+const double eps = 1e-9;
+
+void solve() {
+    int n, k;
+    cin >> n >> k;
+    vector<int> divs;
+    
+    for (int i = 1; i * i <= n; i++) {
+    	if ((n % i == 0)) {
+    		divs.pb(i);
+    		if (i * i == n) break;
+    		divs.pb(n/i);
+    	}
+    }
+    
+    vector<vector<int>> poss(n, vector<int>(26, 0));
+    
+    for (int i = 0; i < k; i++) {
+    	string s;
+    	cin >> s;
+    	for (int j = 0; j < n; j++) {
+    		poss[j][s[j] - 'a'] = 1;
+    	}
+    }
+    
+    sort(divs.begin(), divs.end());
+    
+    for (int d = 0; d < divs.size(); d++) {
+    	int div = divs[d];
+    	vector<vector<int>> letters(div, vector<int>(26, 1));
+    	bool valid = true;
+    	
+    	string s(div, '$');
+    	
+    	// dbg(div);
+    	for (int i = 0; i < div; i++) {
+    		for (int j = 0; j < n / div; j++) {
+    			// dbg(j*div+i);
+    			for (int k = 0; k < 26; k++) {
+    				letters[i][k] &= poss[j*div + i][k];
+    			}
+    		}
+    	}
+    	
+    	for (int i = 0; i < div; i++) {
+    		bool rv = false;
+    		for (int j = 0; j < 26; j++) {
+    			if (letters[i][j]) {
+    				rv = true;
+    				s[i] = (j + 'a');
+    			}
+    		}
+    		
+    		if (!rv) valid = false;
+    	}
+    	
+    	if (!valid) continue;
+    	
+    	string t;
+    	for (int i = 0; i < n / div; i++) {
+    		t += s;
+    	}
+    	cout << t << ln;
+    	return;
+    }
+}
+
+signed main() {
+    fast_cin();
+    
+    int T = 1;
+    cin >> T;
+    for (int i = 1; i <= T; i++) {
+        solve(  );
+    }
+
+    return 0;
+}
+// g++ A.cpp && ./a.out <input.in>output.out
