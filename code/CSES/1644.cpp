@@ -1,6 +1,6 @@
-// Problem: Josephus Problem II
+// Problem: Maximum Subarray Sum II
 // Contest: CSES - CSES Problem Set
-// URL: https://cses.fi/problemset/task/2163
+// URL: https://cses.fi/problemset/task/1644
 // Memory Limit: 512 MB
 // Time Limit: 1000 ms
 // 
@@ -26,12 +26,6 @@ void __f(const char *names, Arg1 &&arg1, Args &&... args) {
     __f(comma + 1, args...);
 }
 
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-using namespace __gnu_pbds;
-
-#define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
-
 #define ll long long
 #define int ll
 #define ld long double
@@ -43,27 +37,33 @@ const int MOD = 1000000007;
 const double eps = 1e-9;
 
 void solve() {
-    int n, k;
-    cin >> n >> k;
-    ordered_set x;
-    
-    for (int i = 1; i <= n; i++) {
-        x.insert(i);
-    }
-    
-    vector<int> rem;
-    int cur = 0;
+    // -1 3 1 6 9
+    int n, a, b; cin >> n >> a >> b;
+    vector<int> v(n); for (auto& i : v) cin >> i;
+    vector<int> k(n + 1, 0);
+    int cur = 0, mx = -INF;
     for (int i = 0; i < n; i++) {
-        cur += k;
-        cur %= (x.size());
-        auto itr = x.find_by_order(cur);
-        rem.pb(*itr);
-        x.erase(itr);
+        cur += v[i];
+        mx = max(mx, cur);
+        k[i+1] = cur;
     }
     
-    for (auto& i : rem) {
-        cout << i << " ";
+    multiset<int> ms;
+    
+    int ans = -INF;
+    for (int i = n; i >= 1; i--) {
+        if (i + b <= n) ms.erase(ms.find(k[i+b]));
+        if (i + a - 1 <= n) ms.insert(k[i+a-1]);
+        
+        if (ms.empty()) continue;
+    
+        int mxe = *ms.rbegin();
+        ans = max(ans, mxe - k[i-1]);
+        
+        // dbg(k[i-1], mxe, ms.size());
     }
+    
+    cout << ans << ln;
 }
 
 signed main() {

@@ -1,6 +1,6 @@
-// Problem: Josephus Problem II
+// Problem: Distinct Values Subsequences
 // Contest: CSES - CSES Problem Set
-// URL: https://cses.fi/problemset/task/2163
+// URL: https://cses.fi/problemset/task/3421
 // Memory Limit: 512 MB
 // Time Limit: 1000 ms
 // 
@@ -26,12 +26,6 @@ void __f(const char *names, Arg1 &&arg1, Args &&... args) {
     __f(comma + 1, args...);
 }
 
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-using namespace __gnu_pbds;
-
-#define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
-
 #define ll long long
 #define int ll
 #define ld long double
@@ -42,28 +36,44 @@ const ld PI = acos(-1);
 const int MOD = 1000000007;
 const double eps = 1e-9;
 
+ll binexp(ll a, ll b) {
+    ll res = 1;
+    while (b) {
+        if (b&1) {
+            res = (res * a) % MOD;
+        }
+        a = (a * a) % MOD;
+        b >>= 1;
+    }
+    return res;
+}
+
 void solve() {
-    int n, k;
-    cin >> n >> k;
-    ordered_set x;
-    
-    for (int i = 1; i <= n; i++) {
-        x.insert(i);
+    int n;
+    cin >> n;
+    map<int, int> ct;
+    vector<int> a(n);
+    for (auto& i : a) {
+        cin >> i;
+        ct[i]++;
     }
-    
-    vector<int> rem;
-    int cur = 0;
+    int mult = 1;
+    for (auto& i : ct) {
+        i.second++;
+        mult *= i.second;
+        mult %= MOD;
+    }
+    int ans = 0;
     for (int i = 0; i < n; i++) {
-        cur += k;
-        cur %= (x.size());
-        auto itr = x.find_by_order(cur);
-        rem.pb(*itr);
-        x.erase(itr);
+        mult *= binexp(ct[a[i]]--, MOD - 2);
+        mult %= MOD;
+        ans += mult;
+        ans %= MOD;
+        mult *= ct[a[i]];
+        mult %= MOD;
     }
     
-    for (auto& i : rem) {
-        cout << i << " ";
-    }
+    cout << ans << ln;
 }
 
 signed main() {

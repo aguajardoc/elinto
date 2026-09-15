@@ -1,6 +1,6 @@
-// Problem: Josephus Problem II
+// Problem: Nim Game II
 // Contest: CSES - CSES Problem Set
-// URL: https://cses.fi/problemset/task/2163
+// URL: https://cses.fi/problemset/task/1098
 // Memory Limit: 512 MB
 // Time Limit: 1000 ms
 // 
@@ -26,12 +26,6 @@ void __f(const char *names, Arg1 &&arg1, Args &&... args) {
     __f(comma + 1, args...);
 }
 
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-using namespace __gnu_pbds;
-
-#define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
-
 #define ll long long
 #define int ll
 #define ld long double
@@ -43,34 +37,19 @@ const int MOD = 1000000007;
 const double eps = 1e-9;
 
 void solve() {
-    int n, k;
-    cin >> n >> k;
-    ordered_set x;
+    int n; cin >> n;
+    vector<int> a(n); int s = 0; for (auto& i : a) cin >> i;
+    for (auto& i : a) s ^= i;
     
-    for (int i = 1; i <= n; i++) {
-        x.insert(i);
-    }
+    cout << (s % 4 ? "first":"second") << ln;
     
-    vector<int> rem;
-    int cur = 0;
-    for (int i = 0; i < n; i++) {
-        cur += k;
-        cur %= (x.size());
-        auto itr = x.find_by_order(cur);
-        rem.pb(*itr);
-        x.erase(itr);
-    }
-    
-    for (auto& i : rem) {
-        cout << i << " ";
-    }
 }
 
 signed main() {
     fast_cin();
     
     int T = 1;
-    // cin >> T;
+    cin >> T;
     for (int i = 1; i <= T; i++) {
         solve(  );
     }
